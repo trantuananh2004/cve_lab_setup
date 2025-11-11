@@ -28,3 +28,34 @@ services:
       WORDPRESS_DB_NAME: wordpress
     volumes:
       - ./wp_data:/var/www/html
+
+  db_lp2:
+    image: mysql:5.7
+    container_name: lp_db_lp2
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass2
+      MYSQL_DATABASE: wordpress_lp2
+      MYSQL_USER: wpuser2
+      MYSQL_PASSWORD: wppass2
+    volumes:
+      - ./db_data_lp2:/var/lib/mysql
+
+  wordpress_lp2:
+    image: wordpress:6.4.1-php8.1-apache
+    container_name: lp_wp_lp2
+    depends_on:
+      - db_lp2
+    restart: always
+    ports:
+      - "8082:80"
+    environment:
+      WORDPRESS_DB_HOST: db_lp2:3306
+      WORDPRESS_DB_USER: wpuser2
+      WORDPRESS_DB_PASSWORD: wppass2
+      WORDPRESS_DB_NAME: wordpress_lp2
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'AUTOMATIC_UPDATER_DISABLED', true );
+        define( 'WP_AUTO_UPDATE_CORE', false );
+    volumes:
+      - ./wp_data_lp2:/var/www/html
